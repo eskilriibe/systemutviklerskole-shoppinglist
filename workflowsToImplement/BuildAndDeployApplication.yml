@@ -43,7 +43,7 @@ jobs:
       
       - name: Set storage account envVar
         run: |
-          // TODO: sette EnvVar ConnectionStrings__AzureStorage til connection string
+          echo "ConnectionStrings__AzureStorage=${{ secrets.STORAGEACCOUNTCONNECTIONSTRING }}" >> $GITHUB_ENV
 
   build:
     runs-on: windows-latest
@@ -54,8 +54,13 @@ jobs:
          uses: actions/setup-dotnet@v4
          with:
           dotnet-version: 9.0.x
-        
-        // TODO: kopier over steg fra Oppgave 1
+
+       - name: Restore dependencies
+         run: dotnet restore
+       - name: Build
+         run: dotnet build --no-restore
+       - name: Test
+         run: dotnet test --no-build --verbosity normal
       
        - name: copy frontend to wwwroot
          run: cp -r .\shoppinglist-frontend\out .\publish\wwwroot
